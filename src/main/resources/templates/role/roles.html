@@ -34,6 +34,19 @@
                         </div>
                         <div class="panel-body">
                            <form class="form-inline">
+                               <div class="form-group">
+                                   <label class="control-label">选择系统:</label>
+                                   <select id="systemId-search" class="arrturnRoom form-control">
+                                       <option value='' selected>全部</option>
+                                       <#if onlovSystems?? && onlovSystems?size gt 0>
+                                       <#list onlovSystems as item>
+                                       <option value='${item.id}'>${item.des}</option>
+                                   </#list>
+                               </#if>
+                               </select>
+                        </div>
+                        <button type="button"  onclick="search();" class="btn btn-primary">查询</button>
+
                            		<@shiro.hasPermission name="/roles/saveRolePermissions">  
 		                        <button type="button" onclick="allotResources();" class="btn btn-info" style="float: right; margin-right: 1px;">分配权限</button>
 							    </@shiro.hasPermission>
@@ -143,7 +156,32 @@
                     "last": "末页"
                 } 
              },
-            "ajax": 'roles',
+            ajax : function(data, callback, settings) {
+                //封装请求参数
+                var param = getQueryCondition(data);
+                $.ajax({
+                    type: "GET",
+                    url: 'roles',
+                    cache : false,  //禁用缓存
+                    data: param,    //传入已封装的参数
+                    dataType: "json",
+                    success: function(result) {
+                        //封装返回数据  如果参数相同，可以直接返回result ，此处作为学习，先这么写了。
+                        var returnData = {};
+                        returnData.draw = result.draw;//这里直接自行返回了draw计数器,应该由后台返回
+                        returnData.recordsTotal = result.recordsTotal;//总记录数
+                        returnData.recordsFiltered = result.recordsFiltered;//后台不实现过滤功能，每次查询均视作全部结果
+                        returnData.data = result.data;
+                        //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
+                        //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
+                        callback(returnData);
+
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert("查询失败");
+                    }
+                });
+            },
             "columns": [
                 {
                     "sClass": "text-center",
@@ -186,6 +224,17 @@
 
     function search(){
         table.ajax.reload();
+    }
+
+    function getQueryCondition(data){
+        var param = {};
+        //组装排序参数
+        param.systemId = $("#systemId-search").val();//查询条件
+        //组装分页参数
+        param.start = data.start;
+        param.length = data.length;
+        param.draw = data.draw;
+        return param;
     }
     //弹出选择角色的框
     var rid;
