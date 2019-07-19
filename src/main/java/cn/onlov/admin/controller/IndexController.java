@@ -1,12 +1,16 @@
 package cn.onlov.admin.controller;
 
 import cn.onlov.admin.core.dao.entities.*;
+import cn.onlov.admin.core.dao.impl.IOnlovSystemServiceImpl;
+import cn.onlov.admin.core.dao.interfaces.IOnlovSystemService;
 import cn.onlov.admin.service.*;
+import cn.onlov.utils.OnStringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +44,7 @@ public class IndexController {
 
     @RequestMapping(value="/login",method=RequestMethod.POST)
     public String login(HttpServletRequest request, OnlovUser onlovUser, Model model){
-        if ( !MyStringUtils.isNotEmpty(onlovUser.getLoginName()) || !MyStringUtils.isNotEmpty(onlovUser.getUserPwd())) {
+        if ( !OnStringUtils.isNotEmpty(onlovUser.getLoginName()) || !OnStringUtils.isNotEmpty(onlovUser.getUserPwd())) {
             request.setAttribute("msg", "用户名或密码不能为空！");
             return "/login";
         }
@@ -85,13 +89,21 @@ public class IndexController {
     }
 
     @RequestMapping("/rolesPage")
-    public String rolesPage(){
-
+    public String rolesPage(Model model){
+        List<OnlovSystem> onlovSystems = onlovSystemService.selectAll();
+        model.addAttribute("onlovSystems", onlovSystems);
         return "role/roles";
     }
 
+    @Autowired
+    private OnlovSystemService onlovSystemService ;
+
     @RequestMapping("/permissionsPage")
-    public String permissionsPage(){
+    public String permissionsPage(Model model){
+
+        List<OnlovSystem> onlovSystems = onlovSystemService.selectAll();
+        model.addAttribute("onlovSystems", onlovSystems);
+
         return "resources/resources";
     }
     

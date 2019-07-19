@@ -1,12 +1,15 @@
 package cn.onlov.admin.service.impl;
 
-import cn.onlov.admin.constants.Constants;
 import cn.onlov.admin.core.dao.entities.OnlovPermission;
 import cn.onlov.admin.core.dao.entities.OnlovRolePermission;
+import cn.onlov.admin.core.dao.entities.OnlovSystem;
 import cn.onlov.admin.core.dao.interfaces.IPermissionService;
 import cn.onlov.admin.core.dao.interfaces.IRolePermissionService;
 import cn.onlov.admin.pojo.bo.CycleOnlovPermissionBo;
 import cn.onlov.admin.service.OnlovPermissionService;
+import cn.onlov.constants.Constants;
+import cn.onlov.utils.MyPageUtil;
+import cn.onlov.utils.OnStringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -39,9 +42,13 @@ public class OnlovPermissionServiceImpl implements OnlovPermissionService {
     @Override
     public IPage<OnlovPermission> selectByPage(CycleOnlovPermissionBo bo) {
         IPage<OnlovPermission> page = new Page<>();
-        page.setCurrent(bo.getCurr()).setSize(bo.getPageSize());
+        page.setCurrent(MyPageUtil.currPage(bo.getCurr(),bo.getPageSize())).setSize(bo.getPageSize());
 
-        IPage<OnlovPermission> res = iPermissionService.page(page, new QueryWrapper<OnlovPermission>().lambda().orderByDesc(OnlovPermission::getId));
+        LambdaQueryWrapper<OnlovPermission> onlovPermissionLambdaQueryWrapper = new QueryWrapper<OnlovPermission>().lambda().orderByDesc(OnlovPermission::getId);
+        if(null!=bo.getSystemId()){
+            onlovPermissionLambdaQueryWrapper.eq(OnlovPermission::getSystemId,bo.getSystemId());
+        }
+        IPage<OnlovPermission> res = iPermissionService.page(page, onlovPermissionLambdaQueryWrapper);
         return res;
 
     }

@@ -5,6 +5,7 @@ import cn.onlov.admin.core.dao.interfaces.IUserService;
 import cn.onlov.admin.pojo.bo.OnlovUserBo;
 import cn.onlov.admin.service.OnlovUserRoleService;
 import cn.onlov.admin.service.OnlovUserService;
+import cn.onlov.admin.util.PasswordHelper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import org.springframework.beans.BeanUtils;

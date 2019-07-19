@@ -1,10 +1,10 @@
 package cn.onlov.admin.service.impl;
 
-import cn.onlov.admin.constants.Constants;
 import cn.onlov.admin.core.dao.entities.OnlovRole;
 import cn.onlov.admin.core.dao.interfaces.IRoleService;
 import cn.onlov.admin.pojo.bo.OnlovRoleBo;
 import cn.onlov.admin.service.OnlovRoleService;
+import cn.onlov.constants.Constants;
 import cn.onlov.utils.MyPageUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -24,7 +24,7 @@ public class OnlovRoleServiceImpl implements OnlovRoleService {
     public List<OnlovRole> queryCycleRoleListWithSelected(Integer uid) {
         IPage<OnlovRole> page = new Page<>();
 //        page.setCurrent(bo.getCurr()).setSize(bo.getPageSize());
-//        boolean a = MyStringUtils.isNotEmpty(bo.getBaseName());
+//        boolean a = OnStringUtils.isNotEmpty(bo.getBaseName());
 
 
         return null;
@@ -35,8 +35,6 @@ public class OnlovRoleServiceImpl implements OnlovRoleService {
         LambdaQueryWrapper<OnlovRole> queryWrapper = new QueryWrapper<OnlovRole>().lambda();
         IPage<OnlovRole> page = new Page<>();
         page.setCurrent(MyPageUtil.currPage(bo.getCurr(),bo.getPageSize())).setSize(bo.getPageSize());
-        queryWrapper.in(OnlovRole::getSystemId,Constants.SYSTEM_MAIN_ID, Constants.THIS_SYSTEM_ID);
-
         IPage<OnlovRole> res = iRoleService.page(page, queryWrapper);
 
         return res;
