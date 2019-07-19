@@ -34,6 +34,9 @@ public class OnlovRoleServiceImpl implements OnlovRoleService {
     public IPage<OnlovRole> selectByPage(OnlovRoleBo bo) {
         LambdaQueryWrapper<OnlovRole> queryWrapper = new QueryWrapper<OnlovRole>().lambda();
         IPage<OnlovRole> page = new Page<>();
+        if(null!=bo.getSystemId()){
+            queryWrapper.eq(OnlovRole::getSystemId,bo.getSystemId()) ;
+        }
         page.setCurrent(MyPageUtil.currPage(bo.getCurr(),bo.getPageSize())).setSize(bo.getPageSize());
         IPage<OnlovRole> res = iRoleService.page(page, queryWrapper);
 
